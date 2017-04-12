@@ -15,7 +15,7 @@ public class PasswordScreen extends JFrame implements ActionListener {
     private JLabel lblEmail;
     private JTextField textField1;
     private JButton btnBack;
-
+/////ciao
     public PasswordScreen(){
         super("Quirk IM");
         this.setSize(380, 680);
