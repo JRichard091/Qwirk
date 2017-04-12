@@ -273,7 +273,7 @@ public class RegisterScreen extends JFrame implements ActionListener {
                 textUsername.setText(username);
                 JOptionPane.showMessageDialog(null, "E-mail is already used Bitch!");
             }
-//////////////////////////////VAFFAnculo
+//////////////////////////////
             else if (email.matches(emailPattern)){
                 Border oldBorder = textName.getBorder();
                 textEmail.setBorder(oldBorder);
