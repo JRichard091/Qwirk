@@ -10,8 +10,14 @@ import java.awt.event.ActionListener;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+
+import java.awt.event.*;
+import java.awt.image.*;
+import javax.imageio.*;
+import java.io.* ;
+
 /**
- * Created by Fabrizio on 23/12/2016.
+ * Created by Riccardo on 23/12/2016.
  */
 public class RegisterScreen extends JFrame implements ActionListener {
     private JPanel rootRegister;
@@ -29,12 +35,23 @@ public class RegisterScreen extends JFrame implements ActionListener {
     private JLabel imgLogo;
     private JTextField textSurname;
     private JTextField textName;
-    private String name = new String();
+    private JButton btnBrowse;
+    private JLabel lblProfilePicture;
+    private JLabel lblName;
+    private JLabel lblSurname;
+    private JLabel lblFileLoaded;
+    private String name = new String("");
     private String surname = new String("");
     private String email = new String("");
     private String username = new String("");
     private String password = new String("");
     private String repeatpassword = new String("");
+
+    //test BROWSE
+    private JButton Ok;
+    String ImageName;
+    JFileChooser file ;
+    //test BROWSE
 
     public RegisterScreen(String status, String nameF, String surnameF, String emailF, String usernameF) {
         super("Quirk IM");
@@ -45,6 +62,11 @@ public class RegisterScreen extends JFrame implements ActionListener {
         btnConfirm.addActionListener(this);
         btnConfirm.setEnabled(false);
         btnBack.addActionListener(this);
+
+        //test BROWSE
+        Ok = new JButton("Show Image") ;
+        Ok.addActionListener(this) ;
+        //test BROWSE
 
         setVisible(true);
         setResizable(false);
@@ -168,7 +190,7 @@ public class RegisterScreen extends JFrame implements ActionListener {
                 //System.out.println("Sto inserendo qualcosa alla password");
                 changeBtnStatus();
                 password=String.valueOf(textPassword.getPassword());
-                System.out.println("Password: " + password + "; textName: " + textPassword.getPassword());
+                System.out.println("Password: " + password + "; textPassword: " + textPassword.getPassword());
 
             }
 
@@ -190,7 +212,7 @@ public class RegisterScreen extends JFrame implements ActionListener {
                 //System.out.println("Sto inserendo qualcosa alla password 2");
                 changeBtnStatus();
                 repeatpassword=String.valueOf(textRepeatPassword.getPassword());
-                System.out.println("Repeat Password: " + repeatpassword + "; textName: " + textRepeatPassword.getPassword());
+                System.out.println("Repeat Password: " + repeatpassword + "; textRepeatPassword: " + textRepeatPassword.getPassword());
 
             }
 
@@ -206,6 +228,36 @@ public class RegisterScreen extends JFrame implements ActionListener {
                 changeBtnStatus();
             }
         });
+        btnBrowse.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(e.getSource()==Ok) {
+                    if(lblFileLoaded.getText().equals("")) {
+                        JOptionPane.showMessageDialog
+                                (rootRegister,"Please Select an Image","Error",JOptionPane.ERROR_MESSAGE) ;
+                    }
+                    else {
+                        ImageName = lblFileLoaded.getText() ;
+                        new GraphicsSetA4(ImageName) ;
+                    }
+                }
+                else if(e.getSource()==btnBrowse)
+                {
+                    file = new JFileChooser() ;
+                    file.showOpenDialog(rootRegister) ;
+
+                    String s = file.getSelectedFile().getAbsolutePath() ;
+                    String[] items = s.split("\\\\");
+                    String lastItem = "";
+                    for (String item : items) {
+                        System.out.println("item = " + item);
+                        lastItem=item.toString();
+                    }
+                    lblFileLoaded.setText("C:\\ ... \\"+lastItem);
+                    //lblFileLoaded.setText(s);
+                }
+            }
+        });
     }
 
     @Override
@@ -217,7 +269,17 @@ public class RegisterScreen extends JFrame implements ActionListener {
             System.out.println("Dentro ciclo confirm");
             //this.dispose();
             name = textName.getText();
+            if (name.isEmpty()){
+                name="";
+            }else {
+                name = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();//Rendi la prima lettera maiuscola e tutte le altre minuscole
+            }
             surname = textSurname.getText();
+            if (surname.isEmpty()){
+                surname="";
+            }else {
+                surname = surname.substring(0, 1).toUpperCase() + surname.substring(1).toLowerCase();
+            }
             email = textEmail.getText();
             username = textUsername.getText();
             //password=textPassword.getPassword().toString();
@@ -351,8 +413,9 @@ public class RegisterScreen extends JFrame implements ActionListener {
     }
 
     private void changeBtnStatus() {
-        if (textName.getText().isEmpty() || textSurname.getText().isEmpty() || textEmail.getText().isEmpty()
-                || textUsername.getText().isEmpty() || textPassword.getPassword().length < 1 || textRepeatPassword.getPassword().length < 1) {
+        /*if (textName.getText().isEmpty() || textSurname.getText().isEmpty() || textEmail.getText().isEmpty()
+                || textUsername.getText().isEmpty() || textPassword.getPassword().length < 1 || textRepeatPassword.getPassword().length < 1) {*/
+        if (textEmail.getText().isEmpty() || textUsername.getText().isEmpty() || textPassword.getPassword().length < 1 || textRepeatPassword.getPassword().length < 1) {
             btnConfirm.setEnabled(false);
         } else {
                 btnConfirm.setEnabled(true);
@@ -370,6 +433,37 @@ public class RegisterScreen extends JFrame implements ActionListener {
             hexString.append(hex);
         }
         return hexString.toString();
+    }
+
+    public class GraphicsSetA4 extends JFrame
+    {
+        Font f ;
+        BufferedImage image ;
+        File file ;
+
+        public GraphicsSetA4(String Image)
+        {
+            super("Frame") ;
+            file = new File(Image) ;
+            try
+            {
+                image = ImageIO.read(file) ;
+            }
+            catch(IOException e)
+            {
+                System.out.println(e) ;
+            }
+            setBounds(400,200,430,400) ;
+            setVisible(true) ;
+            setDefaultCloseOperation
+                    (EXIT_ON_CLOSE) ;
+        }
+
+        public void paint(Graphics g)
+        {
+            g.drawImage(image, 0, 0, null) ;
+        }
+
     }
 
 
